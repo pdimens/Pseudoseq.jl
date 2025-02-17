@@ -10,10 +10,12 @@ end
 amplify(n::Int) = Amplifier(x -> true, n)
 amplify(pref::Function, n::Int) = Amplifier(pred, n)
 (a::Amplifier)(p::Molecules) = amplify(a.pred, p, a.n)
+Base.show(io::IO, amp::Amplifier) = print(io, "Amplifier(x", amp.n, ")")
 
 struct Fragmenter
     meansize::Int
 end
+Base.show(io::IO, frag::Fragmenter) = print(io, "Fragmenter(mean size: ", frag.meansize, "bp)")
 
 """
     fragment(meansize::SequenceLength)
@@ -27,6 +29,8 @@ fragment(meansize::SequenceLength) = Fragmenter(meansize.val)
 struct Tagger
     ntags::Int
 end
+Base.show(io::IO, tag::Tagger) = print(io, "Tagger(", tag.ntags, " molecular tags)")
+
 tag(ntags::Int) = Tagger(ntags)
 (t::Tagger)(p::Molecules) = tag(p, t.ntags)
 
@@ -40,12 +44,16 @@ struct CovSubSampler{T<:Union{SequenceLength,Tuple{SequenceLength,SequenceLength
     cov::ExpectedCoverage
     readlen::T
 end
+Base.show(io::IO, covsampler::CovSubSampler) = print(io, "Coverage Subsampler\n  coverage: ", covsampler.cov.val, "X\n  length: 2 * ", covsampler.readlen[1])
+
 subsample(cov::ExpectedCoverage, rlens)  = CovSubSampler{typeof(rlens)}(cov, rlens)
 (s::CovSubSampler{T})(p::Molecules) where {T} = subsample(p, s.cov, s.readlen)
 
 struct Selector{F<:Function}
     f::F
 end
+Base.show(io::IO, sel::Selector) = print(io, "Selector(", sel.f, ")")
+
 select(f::Function) = Selector(f)
 (s::Selector{F})(p::Molecules) where {F<:Function} = select(s.f, p)
 
@@ -71,6 +79,7 @@ unpaired_reads(len::T) where {T<:Union{Nothing,Int}} = UnPairedReads(len)
 struct SubstitutionMaker{F<:Function}
     fun::F
 end
+Base.show(io::IO, submaker::SubstitutionMaker) = print(io, "SubstitutionMaker(", submaker.fun, ")")
 make_substitutions(f::F) where {F<:Function} = SubstitutionMaker{F}(f)
 (sm::SubstitutionMaker{F})(p::Reads) where {F<:Function} = edit_substitutions(sm.fun, p)
 

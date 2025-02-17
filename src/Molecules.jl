@@ -1,4 +1,3 @@
-
 struct Molecules{T<:AbstractSequencingView}
     genome::Vector{LongSequence{DNAAlphabet{2}}}
     views::Vector{T}
@@ -273,7 +272,6 @@ function tag(p::Molecules{BasicSequencingView}, ntags::Int)
     @info "Done"
     return np
 end
-
 
 
 function select(fn::Function, p::Molecules)

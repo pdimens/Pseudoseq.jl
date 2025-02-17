@@ -6,11 +6,11 @@ version = "0.3.0"
 [deps]
 BioSequences = "7e6ae17a-c86d-528c-b3b9-7f778a29fe59"
 FASTX = "c2308a5c-f048-11e8-3e8a-31650f418d12"
-GenomeGraphs = "3aa97884-90e5-11e8-2134-af657ec4f203"
+Kmers = "445028e4-d31f-4f27-89ad-17affd83fc22"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [compat]
-BioSequences = "2"
-FASTX = "1"
-GenomeGraphs = "0.2"
+BioSequences = "3.4.1"
+FASTX = "2"
+Kmers = "1.0.0"
 julia = "1"

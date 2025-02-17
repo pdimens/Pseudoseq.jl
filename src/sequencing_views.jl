@@ -154,13 +154,13 @@ function amplify(views::Vector{T}, n::Integer) where {T<:AbstractSequencingView}
 end
 
 # Utility function, randomly select values from a range, without replacement.
-function sample_values(range::UnitRange, n::Int)
+function sample_values(range::T, n::Int) where T <: UnitRange
     @assert n <= length(range)
-    s = Set{eltype(range)}()
+    s = Set{eltype(T)}()
     while length(s) < n
         push!(s, rand(range))
     end
-    return collect(s)
+    return collect(eltype(T), s)
 end
 
 ## The subsample transformation

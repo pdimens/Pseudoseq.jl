@@ -1,36 +1,3 @@
-module Sequencing
-
-export
-    # Molecules
-    Molecules,
-    amplify,
-    fragment,
-    select,
-    subsample,
-    tag,
-    flip,
-    # Reads
-    paired_reads,
-    unpaired_reads,
-    nreads,
-    ClearSubstitutions,
-    FixedProbSubstitutions,
-    edit_substitutions,
-    make_substitutions,
-    generate,
-    # Utils
-    needed_sample_size,
-    expected_coverage,
-    sequence,
-    X, x, bp,
-    makereads,
-    coverage_report,
-    uncovered_positions,
-    uncovered_regions
-
-
-using BioSequences, FASTX, Random
-
 struct ExpectedCoverage
     val::Int
 end
@@ -48,7 +15,7 @@ end
 const bp = SequenceLength
 
 Base.:*(val::Int, ::Type{SequenceLength}) = SequenceLength(val)
-Base.show(io::IO, x::SequenceLength) = println(io, x.val, " base pairs")
+Base.show(io::IO, x::SequenceLength) = print(io, x.val, " base pairs")
 
 Base.:+(x::SequenceLength, y::SequenceLength) = SequenceLength(x.val + y.val)
 
@@ -67,14 +34,7 @@ function needed_sample_size(coverage::ExpectedCoverage, genome_len::SequenceLeng
     return div(coverage * genome_len, sum(lens))
 end
 
-
-
 expected_coverage(G::Int, L::Int, N::Int) = div(L * N, G)
-
-include("sequencing_views.jl")
-include("Molecules.jl")
-include("Reads.jl")
-include("DSL.jl")
 
 struct CoverageReport
     genome::Vector{LongSequence{DNAAlphabet{2}}}
@@ -132,7 +92,7 @@ function _summarize_cov(V::Vector{UInt64})
     return (min, max, sum)
 end
 
-function summarize(cr::Sequencing.CoverageReport, bychrom = false)
+function summarize(cr::CoverageReport, bychrom = false)
     stats = [_summarize_cov(c) for c in cr.covs]
     if bychrom
         println("Coverage Summary:")
@@ -155,5 +115,3 @@ function summarize(cr::Sequencing.CoverageReport, bychrom = false)
         println("\tmax: $max")
     end
 end
-
-end # module

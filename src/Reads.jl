@@ -130,7 +130,6 @@ fixed, uniform, per-base probability.
 struct FixedProbSubstitutions <: Function
     prob::Float64
 end
-
 function (f::FixedProbSubstitutions)(output::Vector{Substitution}, readseq::LongSequence{DNAAlphabet{2}})
     p = f.prob
     dice = rand(length(readseq))
@@ -277,7 +276,7 @@ end
 function prepare_tags(reads::Reads{Paired,TaggedSequencingView})
     tags = keys(summarize_tags(views(reads)))
     tagrange = 0x0000000000000000:0x00000000ffffffff
-    tagseqs = DNAMer{16}.(sample_values(tagrange, length(tags)))
+    tagseqs = DNAKmer{16}.(sample_values(tagrange, length(tags)))
     tagdict = Dict(zip(tags, tagseqs))
     return tagdict
 end
