@@ -230,8 +230,9 @@ function generate(wtr::FASTQ.Writer, reads::Reads{UnPaired,BasicSequencingView})
             _add_subs!(seq, subs[i])
         end
         # Make the quality string for the read, (currently no real meaning!).
-        qual = Vector{Int}(undef, length(seq))
-        FASTQ.encode_quality_string!(FASTQ.SANGER_QUAL_ENCODING, fill(30, length(seq)), qual, 1, length(seq))
+        qual = fill(Int8(30)::Int8, length(seq))
+        #qual = Vector{Int}(undef, length(seq))
+        #FASTQ.encode_quality_string!(FASTQ.SANGER_QUAL_ENCODING, fill(30, length(seq)), qual, 1, length(seq))
         # Create the name for the read...
         fragname = string("Refseq_", seqid(v))
         fqread = FASTQ.Record(fragname, seq, qual)
@@ -255,8 +256,9 @@ function generate(R1W::FASTQ.Writer, R2W::FASTQ.Writer, reads::Reads{Paired,Basi
             _add_subs!(seq, subs[i])
         end
         # Make the quality string for the read, (currently no real meaning!).
-        qual = Vector{Int}(undef, length(seq))
-        FASTQ.encode_quality_string!(FASTQ.SANGER_QUAL_ENCODING, fill(30, length(seq)), qual, 1, length(seq))
+        #qual = Vector{Int}(undef, length(seq))
+        #FASTQ.encode_quality_string!(FASTQ.SANGER_QUAL_ENCODING, fill(30, length(seq)), qual, 1, length(seq))
+        qual = fill(Int8(30)::Int8, length(seq))
         # Create the name for the read...
         if isodd(i)
             fragname = string("readpair_", i)
@@ -304,8 +306,9 @@ function generate(R1W::FASTQ.Writer, R2W::FASTQ.Writer, reads::Reads{Paired,Tagg
         end
         
         # Make the quality string for the read, (currently no real meaning!).
-        qual = Vector{Int}(undef, length(seq))
-        FASTQ.encode_quality_string!(FASTQ.SANGER_QUAL_ENCODING, fill(30, length(seq)), qual, 1, length(seq))
+        qual = fill(Int8(30)::Int8, length(seq))
+        #qual = Vector{Int}(undef, length(seq))
+        #FASTQ.encode_quality_string!(FASTQ.SANGER_QUAL_ENCODING, fill(30, length(seq)), qual, 1, length(seq))
         
         # Create the name for the read...
         pairnum = Int(ceil(i / 2))
@@ -328,8 +331,8 @@ in a single FASTQ file, R1 and R2 reads are partitioned into two seperate FASTQ
 files.
 """
 function generate(R1name::String, R2name::String, reads::Reads{Paired,<:AbstractSequencingView})
-    R1W = open(FASTQ.Writer, R1name)
-    R2W = open(FASTQ.Writer, R2name)
+    R1W = FASTQ.Writer(open(R1name, "w"), quality_header = false)
+    R2W = FASTQ.Writer(open(R2name, "w"), quality_header = false)
     try
         generate(R1W, R2W, reads)
     finally
@@ -356,7 +359,7 @@ records in the file.
     `@Reference_2_R1` means the second sequence in the genome.
 """
 function generate(filename::String, reads::Reads)
-    open(FASTQ.Writer, filename) do wtr
+    FASTQ.Writer(open(filename, "w"), quality_header = false) do wtr
         generate(wtr, reads)
     end
     return reads
